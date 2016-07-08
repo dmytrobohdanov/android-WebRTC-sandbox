@@ -40,7 +40,14 @@ public class MainActivity extends AppCompatActivity {
         Log.d(D_TAG, "version 0.0.0.4");
 
         videoView.setEGLContextClientVersion(1);
-        boolean peerConnection = PeerConnectionFactory.initializeAndroidGlobals(this, INITIALIZE_AUDIO, INITIALIZE_VIDEO, VIDEO_CODEC_HW_ACCELERATION, null);
+        boolean hasAndroidGlobalsInitializedSuccessfully =
+                PeerConnectionFactory.initializeAndroidGlobals(
+                        this,
+                        INITIALIZE_AUDIO,
+                        INITIALIZE_VIDEO,
+                        VIDEO_CODEC_HW_ACCELERATION,
+                        null);
+
         //todo: check peerConnection for success
 
         PeerConnectionFactory peerConnectionFactory = new PeerConnectionFactory();
@@ -91,7 +98,5 @@ public class MainActivity extends AppCompatActivity {
             String s = e.getMessage();
             Log.e(D_TAG, s);
         }
-
-
     }
 }
