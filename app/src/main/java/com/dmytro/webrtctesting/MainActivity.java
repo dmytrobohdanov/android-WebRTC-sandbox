@@ -7,13 +7,19 @@ import android.util.Log;
 
 import org.webrtc.AudioSource;
 import org.webrtc.AudioTrack;
+import org.webrtc.DataChannel;
+import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
+import org.webrtc.MediaStream;
+import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.VideoCapturerAndroid;
 import org.webrtc.VideoRenderer;
 import org.webrtc.VideoRendererGui;
 import org.webrtc.VideoSource;
 import org.webrtc.VideoTrack;
+
+import java.util.LinkedList;
 
 
 /**
@@ -46,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                         INITIALIZE_AUDIO,
                         INITIALIZE_VIDEO,
                         VIDEO_CODEC_HW_ACCELERATION,
-                        null);
+                        VideoRendererGui.getEGLContext());
 
         //todo: check peerConnection for success
 
@@ -98,5 +104,99 @@ public class MainActivity extends AppCompatActivity {
             String s = e.getMessage();
             Log.e(D_TAG, s);
         }
+
+
+        // We start out with an empty MediaStream object,
+        // created with help from our PeerConnectionFactory
+        // Note that LOCAL_MEDIA_STREAM_ID can be any string
+//        MediaStream mediaStream = peerConnectionFactory.createLocalMediaStream(LOCAL_MEDIA_STREAM_ID);
+        MediaStream mediaStream = peerConnectionFactory.createLocalMediaStream("someID");
+
+// Now we can add our tracks.
+        mediaStream.addTrack(localVideoTrack);
+        mediaStream.addTrack(localAudioTrack);
+
+        LinkedList<PeerConnection.IceServer> iceServers = new LinkedList<>();
+        iceServers.add(new PeerConnection.IceServer("stun:stun.l.google.com:19302"));
+        PeerConnection.RTCConfiguration configuration = new PeerConnection.RTCConfiguration(iceServers);
+
+//        new PeerConnection.IceServer("stun:stun.l.google.com:19302")
+        MediaConstraints constraints = new MediaConstraints();
+
+        constraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToRecieveAudio", "true"));
+        constraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));
+
+
+        PeerConnection.Observer observer = new PeerConnection.Observer() {
+            /**
+             * Triggered when media is received on a new stream from remote peer.
+             */
+            @Override
+            public void onAddStream(MediaStream mediaStream) {
+
+            }
+
+            /**
+             * Triggered when a remote peer opens a DataChannel.
+             */
+            @Override
+            public void onDataChannel(DataChannel dataChannel) {
+
+            }
+
+            /**
+             *  Triggered when a new ICE candidate has been found.
+             */
+            @Override
+            public void onIceCandidate(IceCandidate iceCandidate) {
+
+            }
+
+            /**
+             * Triggered when the IceConnectionState changes.
+             */
+            @Override
+            public void onIceConnectionChange(PeerConnection.IceConnectionState iceConnectionState) {
+
+            }
+
+            /**
+             *  Triggered when the IceGatheringState changes.
+             */
+            @Override
+            public void onIceGatheringChange(PeerConnection.IceGatheringState iceGatheringState) {
+
+            }
+
+            /**
+             *  Triggered when a remote peer close a stream.
+             */
+            @Override
+            public void onRemoveStream(MediaStream mediaStream) {
+
+            }
+
+            /**
+             * Triggered when renegotiation is necessary.
+             */
+            @Override
+            public void onRenegotiationNeeded() {
+
+            }
+
+            /**
+             * Triggered when the SignalingState changes.
+             */
+            @Override
+            public void onSignalingChange(PeerConnection.SignalingState signalingState) {
+
+            }
+        };
+
+        PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(
+                configuration,
+                constraints,
+                observer);
+
     }
 }
