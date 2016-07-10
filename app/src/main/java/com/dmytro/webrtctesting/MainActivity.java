@@ -13,6 +13,8 @@ import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
+import org.webrtc.SdpObserver;
+import org.webrtc.SessionDescription;
 import org.webrtc.VideoCapturerAndroid;
 import org.webrtc.VideoRenderer;
 import org.webrtc.VideoRendererGui;
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private GLSurfaceView videoView;
     private VideoTrack localVideoTrack;
 
-    private final String D_TAG = "111MainActivity";
+    private final String D_TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         constraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));
 
 
-        PeerConnection.Observer observer = new PeerConnection.Observer() {
+        PeerConnection.Observer peerConnectionObserver = new PeerConnection.Observer() {
             /**
              * Triggered when media is received on a new stream from remote peer.
              */
@@ -193,10 +195,38 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        SdpObserver sdpObserver = new SdpObserver() {
+            @Override
+            public void onCreateSuccess(SessionDescription sessionDescription) {
+
+            }
+
+            @Override
+            public void onSetSuccess() {
+
+            }
+
+            @Override
+            public void onCreateFailure(String s) {
+
+            }
+
+            @Override
+            public void onSetFailure(String s) {
+
+            }
+        };
+
         PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(
                 configuration,
                 constraints,
-                observer);
+                peerConnectionObserver);
+
+        peerConnection.addStream(mediaStream);
+
+        peerConnection.createOffer(sdpObserver, constraints);
+        peerConnection.createAnswer();
 
     }
+
 }
