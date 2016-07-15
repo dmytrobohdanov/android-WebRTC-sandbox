@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
 //        String name = VideoCapturerAndroid.getNameOfFrontFacingDevice();
 //        String name = VideoCapturerAndroid.getNameOfBackFacingDevice();
 
+        VideoCapturerAndroid.getNameOfBackFacingDevice()
         String name = VideoCapturerAndroid.getDeviceName(0);
 
         // Creates a VideoCapturerAndroid instance for the device name
@@ -225,8 +226,9 @@ public class MainActivity extends AppCompatActivity {
         peerConnection.addStream(mediaStream);
 
         peerConnection.createOffer(sdpObserver, constraints);
-        peerConnection.createAnswer();
+//        peerConnection.createAnswer();
 
+//        IceCandidate user = new IceCandidate()
     }
 
 }
